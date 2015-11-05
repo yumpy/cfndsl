@@ -33,6 +33,15 @@ Resources:
      SecurityGroups: [ String ]
      SpotPrice: String
      UserData: String
+  "AWS::AutoScaling::LifecycleHook" :
+   Properties:
+    AutoScalingGroupName : String
+    DefaultResult : String
+    HeartbeatTimeout : Integer
+    LifecycleTransition : String
+    NotificationMetadata : String
+    NotificationTargetARN : String
+    RoleARN : String
   "AWS::AutoScaling::ScalingPolicy" :
    Properties:
     AdjustmentType: String
@@ -284,22 +293,59 @@ Resources:
     InternetGatewayId: String
     VpcId: String
     VpnGatewayId: String
+  "AWS::EC2::VPCPeeringConnection" :
+   Properties:
+    PeerVpcId : String
+    Tags : [ EC2Tag ]
+    VpcId : String
+  "AWS::EC2::VPNGateway" :
+   Properties:
+    Type : String
+    Tags : [ EC2Tag ]
+  "AWS::EC2::VPNGatewayConnection" :
+   Properties:
+    Type : String
+    CustomerGatewayId : String
+    StaticRoutesOnly : Boolean
+    Tags : [ EC2Tag ]
+    VpnGatewayId : String
+  "AWS::EC2::VPNConnection" :
+   Properties:
+    Type : String
+    CustomerGatewayId : String
+    StaticRoutesOnly : Boolean
+    Tags : [ EC2Tag ]
+    VpnGatewayId : String
+  "AWS::EC2::VPNConnectionRoute" :
+   Properties:
+    DestinationCidrBlock : String
+    VpnConnectionId : String
+  "AWS::EC2::VPNGatewayRoutePropagation" :
+   Properties:
+    RouteTableIds : [ String ]
+    VpnGatewayId : String
   "AWS::ElastiCache::CacheCluster" :
    Properties:
-    AutoMinorVersionUpgrade: Boolean
-    ClusterName: String
-    CacheNodeType: String
-    CacheParameterGroupName: String
-    CacheSecurityGroupNames: [String]
-    CacheSubnetGroupName: String
-    Engine: String
-    EngineVersion: String
-    NotificationTopicArn: String
-    NumCacheNodes: String
-    Port: Integer
-    PreferredAvailabilityZone: String
-    PreferredMaintenanceWindow: String
-    VpcSecurityGroupIds: [String]
+    AutoMinorVersionUpgrade : Boolean
+    AZMode : String
+    CacheNodeType : String
+    CacheParameterGroupName : String
+    CacheSecurityGroupNames : [ String ]
+    CacheSubnetGroupName : String
+    ClusterName : String
+    Engine : String
+    EngineVersion : String
+    NotificationTopicArn : String
+    NumCacheNodes : String
+    Port : Integer
+    PreferredAvailabilityZone : String
+    PreferredAvailabilityZones : [ String ]
+    PreferredMaintenanceWindow : String
+    SnapshotArns : [ String ]
+    SnapshotName : String
+    SnapshotRetentionLimit : Integer
+    SnapshotWindow : String
+    VpcSecurityGroupIds : [String]
   "AWS::ElastiCache::ReplicationGroup" :
    Properties:
     AutomaticFailoverEnabled: Boolean
@@ -327,7 +373,7 @@ Resources:
      Properties: [ String ]
   "AWS::ElastiCache::SecurityGroup" :
    Properties:
-    Decription: String
+    Description: String
   "AWS::ElastiCache::SecurityGroupIngress" :
    Properties:
     CacheSecurityGroupName: String
@@ -384,6 +430,7 @@ Resources:
     SecretAccessKey: String
   "AWS::IAM::Group" :
    Properties:
+    ManagedPolicyArns: [ String ]
     Path: String
     Policies: [ IAMEmbeddedPolicy ]
    Attributes:
@@ -404,6 +451,7 @@ Resources:
   "AWS::IAM::Role" :
    Properties:
     AssumeRolePolicyDocument: JSON
+    ManagedPolicyArns: [ String ]
     Path: String
     Policies: [ IAMEmbeddedPolicy ]
    Attributes:
@@ -512,6 +560,7 @@ Resources:
      PreferredMaintenanceWindow: String
      PubliclyAccessible: String
      MultiAZ: Boolean
+     SourceDBInstanceIdentifier: String
      Tags: [ EC2Tag ]
      VPCSecurityGroups: [ String ]
     Attributes:
@@ -659,6 +708,20 @@ Resources:
    Properties:
     ContainerDefinitions: [ ECSContainerDefinition ]
     Volumes: [ ECSVolume ]
+  "AWS::CodeDeploy::Application" :
+    Properties: {}
+  "AWS::CodeDeploy::DeploymentConfig" :
+    Properties:
+      MinimumHealthyHosts: CDMinimumHealthyHosts
+  "AWS::CodeDeploy::DeploymentGroup" :
+    Properties:
+      ApplicationName: String
+      AutoScalingGroups: [ String ]
+      Deployment: CDDeployment
+      DeploymentConfigName: String
+      Ec2TagFilters: [ CDEc2TagFilters ]
+      OnPremisesInstanceTagFilters: [ CDOnPremisesInstanceTagFilters ]
+      ServiceRoleArn: String
 
 Types:
  String:  String
@@ -915,3 +978,31 @@ Types:
  ECSVolume:
    Name: String
    Host: ECSHost
+ CDMinimumHealthyHosts:
+   Type: String
+   Value: Integer
+ CDGitHubLocation:
+   CommitId: String
+   Repository: String
+ CDS3Location:
+   Bucket: String
+   BundleType: String
+   ETag: String
+   Key: String
+   Version: String
+ CDRevision:
+   GitHubLocation: CDGitHubLocation
+   RevisionType: String
+   S3Location: CDS3Location
+ CDDeployment:
+   Description: String
+   IgnoreApplicationStopFailures: Boolean
+   Revision: CDRevision
+ CDEc2TagFilters:
+   Key: String
+   Type: String
+   Value: String
+ CDOnPremisesInstanceTagFilters:
+   Key: String
+   Type: String
+   Value: String
